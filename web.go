@@ -1,4 +1,20 @@
 package main
 
-type Router struct {
+import (
+	"github.com/go-chi/chi"
+)
+
+type Web struct {
+	Router *chi.Mux
+}
+
+func NewWeb() *Web {
+	r := chi.NewRouter()
+
+	r.Route("/user", func(r chi.Router) {
+		// r.Post("/register")
+		// r.Post("/login")
+	})
+
+	return &Web{Router: r}
 }

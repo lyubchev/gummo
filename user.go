@@ -14,7 +14,7 @@ type User struct {
 	Location Location
 }
 
-func New(email, password, name, avatar string) (*User, error) {
+func NewUser(email, password, name, avatar string) (*User, error) {
 	hashed, err := hashPassword(password)
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func New(email, password, name, avatar string) (*User, error) {
 	}, nil
 }
 
-func (u *User) CompareHashAndPassword(, password string) bool {
+func (u *User) CompareHashAndPassword(password string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)) == nil
 }
 

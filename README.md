@@ -1,8 +1,11 @@
-todo:
+## To do:
 
 - [ ] go-chi
-- [ ] web struct
+- [x] web struct
 - [x] user struct
 - [ ] sessions
 - [ ] password hashing
 - [ ] login/register
+- [ ] write docs
+- [ ] mysql schema
+- [ ] validation
