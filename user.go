@@ -29,6 +29,10 @@ func New(email, password, name, avatar string) (*User, error) {
 	}, nil
 }
 
+func (u *User) CompareHashAndPassword(hashedPassword, password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
+}
+
 func hashPassword(pwd string) (string, error) {
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(pwd), 10)
 	if err != nil {
