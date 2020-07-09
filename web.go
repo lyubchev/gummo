@@ -12,7 +12,7 @@ func NewWeb() *Web {
 	r := chi.NewRouter()
 
 	r.Route("/user", func(r chi.Router) {
-		// r.Post("/register")
+		r.Post("/register", UserRegister)
 		// r.Post("/login")
 	})
 
