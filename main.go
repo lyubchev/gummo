@@ -43,8 +43,12 @@ func main() {
 		DB:       RedisDB,
 	})
 
-	db, err := db.Open(mysql.Adapter, settings)
-	wb := NewWeb(db, rdb)
+	dbConn, err := db.Open(mysql.Adapter, settings)
+	if err != nil {
+		panic(err)
+	}
+
+	wb := NewWeb(dbConn, rdb)
 
 	log.Println("📳 Gummo server successfully started and listening on :8080")
 	if err := http.ListenAndServe(":8080", wb); err != nil {
