@@ -17,7 +17,7 @@ type registerRequest struct {
 	Avatar   string `json:"avatar,omitempty"`
 }
 
-func UserRegister(w http.ResponseWriter, r *http.Request) {
+func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
 	var registerForm registerRequest
 
 	if err := render.DecodeJSON(r.Body, registerForm); err != nil {
@@ -31,6 +31,13 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, ErrBadRequest)
+		return
+	}
+
+	_, err = web.DB.Collection("users").Insert(user)
+	if err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, ErrInternalServer)
 		return
 	}
 

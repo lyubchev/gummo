@@ -6,12 +6,12 @@ import (
 )
 
 type User struct {
-	Email    string
-	Password string
-	Name     string
-	Avatar   string
-	ID       string
-	Location Location
+	Email    string   `json:"email,omitempty" db:"email"`
+	Password string   `json:"-" db:"password"`
+	Name     string   `json:"name,omitempty" db:"name"`
+	Avatar   string   `json:"avatar,omitempty" db:"avatar"`
+	ID       string   `json:"id,omitempty" db:"id"`
+	Location Location `json:"location,omitempty" db:"-"`
 }
 
 func NewUser(email, password, name, avatar string) (*User, error) {
