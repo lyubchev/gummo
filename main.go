@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
@@ -21,6 +22,13 @@ func main() {
 	MySQLDatabase := os.Getenv("MYSQL_DATABASE")
 	MySQLUser := os.Getenv("MYSQL_USER")
 	MySQLPassword := os.Getenv("MYSQL_PASSWORD")
+	RedisAddress := os.Getenv("REDIS_ADDRESS")
+	RedisPassword := os.Getenv("REDIS_PASSWORD")
+	RedisDB, err := strconv.Atoi(os.Getenv("REDIS_DB"))
+
+	if err != nil {
+		panic(err)
+	}
 
 	settings := mysql.ConnectionURL{
 		Host:     MySQLHost,
@@ -30,9 +38,9 @@ func main() {
 	}
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "",
-		DB:       0,
+		Addr:     RedisAddress,
+		Password: RedisPassword,
+		DB:       RedisDB,
 	})
 
 	db, err := db.Open(mysql.Adapter, settings)
