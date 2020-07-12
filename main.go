@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -27,5 +28,11 @@ func main() {
 		Password: MySQLPassword,
 	}
 
-	sess, err := db.Open(mysql.Adapter, settings)
+	db, err := db.Open(mysql.Adapter, settings)
+	wb := NewWeb(db)
+
+	log.Println("📳 Gummo server successfully started and listening on :8080")
+	if err := http.ListenAndServe(":8080", wb); err != nil {
+		panic(err)
+	}
 }
