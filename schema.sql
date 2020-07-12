@@ -3,6 +3,6 @@ create table if not exists users(
   name varchar(255) NOT NULL,
   email varchar(255) NOT NULL,
   password varchar(255) NOT NULL,
-  avatar varchar(255) NOT NULL,
+  avatar varchar(255) NULL,
   UNIQUE KEY email (email)
 )
