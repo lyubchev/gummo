@@ -1,17 +1,12 @@
 package main
 
 import (
-	"errors"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
 )
-
-var ErrBadRequest = errors.New("Bad Request")
-var ErrNotFound = errors.New("Not found")
-var ErrInternalServer = errors.New("Internal server error")
 
 type regCredentials struct {
 	Email    string `json:"email"`
@@ -30,7 +25,7 @@ func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
 
 	if err := render.DecodeJSON(r.Body, creds); err != nil {
 		render.Status(r, http.StatusInternalServerError)
-		render.JSON(w, r, ErrInternalServer)
+		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
@@ -38,14 +33,14 @@ func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 		render.Status(r, http.StatusBadRequest)
-		render.JSON(w, r, ErrBadRequest)
+		render.JSON(w, r, http.StatusText(http.StatusBadRequest))
 		return
 	}
 
 	_, err = web.DB.Collection("users").Insert(user)
 	if err != nil {
 		render.Status(r, http.StatusInternalServerError)
-		render.JSON(w, r, ErrInternalServer)
+		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
@@ -58,7 +53,7 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	if err := render.DecodeJSON(r.Body, creds); err != nil {
 		render.Status(r, http.StatusInternalServerError)
-		render.JSON(w, r, ErrInternalServer)
+		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
 		return
 	}
 
@@ -70,25 +65,29 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		render.Status(r, http.StatusNotFound)
-		render.JSON(w, r, ErrNotFound)
+		render.JSON(w, r, http.StatusText(http.StatusNotFound))
 		return
 	}
 
-	if user.CompareHashAndPassword(creds.Password) {
-		sid := uuid.New().String()
-		if err := wb.Redis.Set(sid, user.Email, time.Hour*24); err != nil {
-			render.Status(r, http.StatusInternalServerError)
-			render.JSON(w, r, ErrInternalServer)
-			return
-		}
-
-		http.SetCookie(w, &http.Cookie{
-			Name:    "gummo_token",
-			Value:   sid,
-			Expires: time.Now().Add(time.Hour * 24),
-		})
-
-		render.Status(r, http.StatusOK)
+	if !user.CompareHashAndPassword(creds.Password) {
+		render.Status(r, http.StatusUnauthorized)
+		render.JSON(w, r, http.StatusText(http.StatusUnauthorized))
+		return
 	}
+
+	sid := uuid.New().String()
+	if err := wb.Redis.Set(sid, user.Email, time.Hour*24); err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    "gummo_token",
+		Value:   sid,
+		Expires: time.Now().Add(time.Hour * 24),
+	})
+
+	render.Status(r, http.StatusOK)
 
 }
