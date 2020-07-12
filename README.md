@@ -1,6 +1,6 @@
 ## To do:
 
-- [ ] go-chi
+- [x] go-chi
 - [x] web struct
 - [x] user struct
 - [ ] sessions
