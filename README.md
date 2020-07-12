@@ -4,7 +4,7 @@
 - [x] web struct
 - [x] user struct
 - [ ] sessions
-- [ ] password hashing
+- [x] password hashing
 - [ ] login/register
 - [ ] write docs
 - [ ] mysql schema
