@@ -1,4 +1,6 @@
-## To do:
+# Gummo - share files seamlessly across devices
+
+## To do list:
 
 - [x] go-chi
 - [x] web struct
