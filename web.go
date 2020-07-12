@@ -11,11 +11,12 @@ import (
 type Web struct {
 	Router *chi.Mux
 	DB     db.Database
+	Redis  *redis.Client
 }
 
 func NewWeb(db db.Database, rdb *redis.Client) *Web {
 	r := chi.NewRouter()
-	wb := &Web{Router: r, DB: db}
+	wb := &Web{Router: r, DB: db, Redis: rdb}
 
 	r.Route("/user", func(r chi.Router) {
 		r.Post("/register", wb.UserRegister)

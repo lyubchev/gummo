@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/go-chi/render"
 	"github.com/google/uuid"
@@ -75,7 +76,19 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	if user.CompareHashAndPassword(creds.Password) {
 		sid := uuid.New().String()
+		if err := wb.Redis.Set(sid, user.Email, time.Hour*24); err != nil {
+			render.Status(r, http.StatusInternalServerError)
+			render.JSON(w, r, ErrInternalServer)
+			return
+		}
 
+		http.SetCookie(w, &http.Cookie{
+			Name:    "gummo_token",
+			Value:   sid,
+			Expires: time.Now().Add(time.Hour * 24),
+		})
+
+		render.Status(r, http.StatusOK)
 	}
 
 }
