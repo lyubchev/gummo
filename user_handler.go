@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-chi/render"
+	"github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 )
 
@@ -38,6 +39,14 @@ func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
 
 	_, err = web.DB.Collection("users").Insert(user)
 	if err != nil {
+		if mysqlError, ok := err.(*mysql.MySQLError); ok {
+			if mysqlError.Number == 1062 {
+				render.Status(r, http.StatusUnprocessableEntity)
+				render.JSON(w, r, http.StatusText(http.StatusUnprocessableEntity))
+				return
+			}
+		}
+
 		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
 		return
@@ -75,7 +84,7 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sid := uuid.New().String()
-	if err := wb.Redis.Set(sid, user.Email, time.Hour*24); err != nil {
+	if err := wb.Redis.Set(sid, user.Email, time.Hour*24).Err(); err != nil {
 		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
 		return
