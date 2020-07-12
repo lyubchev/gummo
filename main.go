@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/go-redis/redis"
 	"github.com/joho/godotenv"
 	"upper.io/db.v3"
 	"upper.io/db.v3/mysql"
@@ -28,8 +29,14 @@ func main() {
 		Password: MySQLPassword,
 	}
 
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+
 	db, err := db.Open(mysql.Adapter, settings)
-	wb := NewWeb(db)
+	wb := NewWeb(db, rdb)
 
 	log.Println("📳 Gummo server successfully started and listening on :8080")
 	if err := http.ListenAndServe(":8080", wb); err != nil {

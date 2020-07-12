@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/go-redis/redis"
 	"upper.io/db.v3"
 )
 
@@ -12,7 +13,7 @@ type Web struct {
 	DB     db.Database
 }
 
-func NewWeb(db db.Database) *Web {
+func NewWeb(db db.Database, rdb *redis.Client) *Web {
 	r := chi.NewRouter()
 	wb := &Web{Router: r, DB: db}
 

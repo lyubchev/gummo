@@ -5,28 +5,35 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/google/uuid"
 )
 
 var ErrBadRequest = errors.New("Bad Request")
+var ErrNotFound = errors.New("Not found")
 var ErrInternalServer = errors.New("Internal server error")
 
-type registerRequest struct {
+type regCredentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Name     string `json:"name"`
 	Avatar   string `json:"avatar,omitempty"`
 }
 
-func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
-	var registerForm registerRequest
+type loginCredentials struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 
-	if err := render.DecodeJSON(r.Body, registerForm); err != nil {
+func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
+	var creds regCredentials
+
+	if err := render.DecodeJSON(r.Body, creds); err != nil {
 		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, ErrInternalServer)
 		return
 	}
 
-	user, err := NewUser(registerForm.Email, registerForm.Password, registerForm.Name, registerForm.Avatar)
+	user, err := NewUser(creds.Email, creds.Password, creds.Name, creds.Avatar)
 	if err != nil {
 
 		render.Status(r, http.StatusBadRequest)
@@ -43,4 +50,32 @@ func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, http.StatusOK)
 	render.JSON(w, r, user)
+}
+
+func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
+	var creds loginCredentials
+
+	if err := render.DecodeJSON(r.Body, creds); err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, ErrInternalServer)
+		return
+	}
+
+	var user User
+
+	err := wb.DB.
+		Collection("users").
+		Find("email", creds.Email).One(&user)
+
+	if err != nil {
+		render.Status(r, http.StatusNotFound)
+		render.JSON(w, r, ErrNotFound)
+		return
+	}
+
+	if user.CompareHashAndPassword(creds.Password) {
+		sid := uuid.New().String()
+
+	}
+
 }
