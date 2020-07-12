@@ -9,5 +9,5 @@
 - [x] password hashing
 - [ ] login/register
 - [ ] write docs
-- [ ] mysql schema
+- [x] mysql schema
 - [ ] validation

@@ -2,13 +2,15 @@ package main
 
 import (
 	"github.com/go-chi/chi"
+	"upper.io/db.v3"
 )
 
 type Web struct {
 	Router *chi.Mux
+	DB     db.Database
 }
 
-func NewWeb() *Web {
+func NewWeb(db db.Database) *Web {
 	r := chi.NewRouter()
 
 	r.Route("/user", func(r chi.Router) {
@@ -16,5 +18,5 @@ func NewWeb() *Web {
 		// r.Post("/login")
 	})
 
-	return &Web{Router: r}
+	return &Web{Router: r, DB: db}
 }
