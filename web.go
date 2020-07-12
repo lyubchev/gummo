@@ -32,6 +32,7 @@ func NewWeb(db db.Database, rdb *redis.Client) *Web {
 	r.Route("/user", func(r chi.Router) {
 		r.Post("/register", wb.UserRegister)
 		r.Post("/login", wb.UserLogin)
+		r.Get("/welcome", wb.UserWelcome)
 	})
 
 	return wb

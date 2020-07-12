@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -98,4 +99,33 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, http.StatusOK)
 
+}
+
+func (wb *Web) UserWelcome(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("gummo_token")
+	if err != nil {
+		render.Status(r, http.StatusUnauthorized)
+		render.JSON(w, r, http.StatusText(http.StatusUnauthorized))
+		return
+	}
+
+	result := wb.Redis.Get(cookie.Value)
+	err = result.Err()
+	if err != nil {
+		render.Status(r, http.StatusUnauthorized)
+		render.JSON(w, r, http.StatusText(http.StatusUnauthorized))
+		return
+	}
+
+	email := result.Val()
+	var user User
+
+	if err := wb.DB.Collection("users").Find("email", email).One(&user); err != nil {
+		render.Status(r, http.StatusNotFound)
+		render.JSON(w, r, http.StatusText(http.StatusNotFound))
+		return
+	}
+
+	render.Status(r, http.StatusOK)
+	render.PlainText(w, r, fmt.Sprintf("Hello, %s!", user.Name))
 }
