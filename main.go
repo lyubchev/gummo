@@ -43,6 +43,11 @@ func main() {
 		DB:       RedisDB,
 	})
 
+	err = rdb.Ping().Err()
+	if err != nil {
+		panic(err)
+	}
+
 	dbConn, err := db.Open(mysql.Adapter, settings)
 	if err != nil {
 		panic(err)
