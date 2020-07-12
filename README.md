@@ -5,9 +5,9 @@
 - [x] go-chi
 - [x] web struct
 - [x] user struct
-- [ ] sessions
+- [x] sessions
 - [x] password hashing
-- [ ] login/register
+- [x] login/register
 - [ ] write docs
 - [x] mysql schema
 - [ ] validation
