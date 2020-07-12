@@ -23,15 +23,14 @@ type loginCredentials struct {
 func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
 	var creds regCredentials
 
-	if err := render.DecodeJSON(r.Body, creds); err != nil {
-		render.Status(r, http.StatusInternalServerError)
-		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
+	if err := render.DecodeJSON(r.Body, &creds); err != nil {
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, http.StatusText(http.StatusBadRequest))
 		return
 	}
 
 	user, err := NewUser(creds.Email, creds.Password, creds.Name, creds.Avatar)
 	if err != nil {
-
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, http.StatusText(http.StatusBadRequest))
 		return
@@ -51,7 +50,7 @@ func (web *Web) UserRegister(w http.ResponseWriter, r *http.Request) {
 func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 	var creds loginCredentials
 
-	if err := render.DecodeJSON(r.Body, creds); err != nil {
+	if err := render.DecodeJSON(r.Body, &creds); err != nil {
 		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
 		return
