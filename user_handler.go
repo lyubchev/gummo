@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -101,7 +100,7 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (wb *Web) UserWelcome(w http.ResponseWriter, r *http.Request) {
+func (wb *Web) UserAbout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("gummo_token")
 	if err != nil {
 		render.Status(r, http.StatusUnauthorized)
@@ -127,5 +126,5 @@ func (wb *Web) UserWelcome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.Status(r, http.StatusOK)
-	render.PlainText(w, r, fmt.Sprintf("Hello, %s!", user.Name))
+	render.JSON(w, r, user)
 }
