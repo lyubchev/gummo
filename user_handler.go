@@ -9,6 +9,10 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	CookieKey = "gummo_user"
+)
+
 type regCredentials struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
@@ -101,6 +105,7 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (wb *Web) UserAbout(w http.ResponseWriter, r *http.Request) {
+	// REFACTORING
 	cookie, err := r.Cookie("gummo_token")
 	if err != nil {
 		render.Status(r, http.StatusUnauthorized)
@@ -108,22 +113,9 @@ func (wb *Web) UserAbout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := wb.Redis.Get(cookie.Value)
-	err = result.Err()
-	if err != nil {
-		render.Status(r, http.StatusUnauthorized)
-		render.JSON(w, r, http.StatusText(http.StatusUnauthorized))
-		return
-	}
-
-	email := result.Val()
-	var user User
-
-	if err := wb.DB.Collection("users").Find("email", email).One(&user); err != nil {
-		render.Status(r, http.StatusNotFound)
-		render.JSON(w, r, http.StatusText(http.StatusNotFound))
-		return
-	}
+	// render.Status(r, http.StatusNotFound)
+	// render.JSON(w, r, http.StatusText(http.StatusNotFound))
+	// return
 
 	render.Status(r, http.StatusOK)
 	render.JSON(w, r, user)
