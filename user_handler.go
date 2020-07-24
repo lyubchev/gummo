@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	CookieKey = "gummo_user"
+	CookieKey = "gummo_token"
 )
 
 type regCredentials struct {
@@ -95,7 +95,7 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:    "gummo_token",
+		Name:    CookieKey,
 		Value:   sid,
 		Expires: time.Now().Add(time.Hour * 24),
 	})
