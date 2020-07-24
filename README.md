@@ -1,6 +1,8 @@
 # Gummo - share files seamlessly across devices
 
-## To do list:
+## To do list
+
+### Server
 
 - [x] go-chi
 - [x] web struct
@@ -13,3 +15,18 @@
 - [ ] write docs
 - [x] mysql schema
 - [ ] validation
+
+### Client
+
+- [ ] ui mock
+- [ ] init react-native (mobile app)
+- [ ] research expo location & compass api
+- [ ] install ui kitten
+- [ ] research react-native-navigation
+  - [ ] screens
+  - [ ] stacks
+  - [ ] navigation
+- [ ] implement screens
+  - [ ] login
+  - [ ] register
+  - [ ] main
