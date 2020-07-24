@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/render"
 	"github.com/go-redis/redis"
 	"upper.io/db.v3"
 )
@@ -52,9 +53,18 @@ func (wb *Web) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	wb.Router.ServeHTTP(w, r)
 }
 
-func Authenticator(next http.Handler) http.Handler {
+func (wb *Web) Authenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user, err := wb.GetFromRequest(r)
 
+		if err != nil {
+			render.Status(r, http.StatusUnauthorized)
+			render.JSON(w, r, http.StatusText(http.StatusUnauthorized))
+			return
+		}
+
+		ctx := WithUser(r.Context(), user)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 

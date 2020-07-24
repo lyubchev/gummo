@@ -105,17 +105,12 @@ func (wb *Web) UserLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (wb *Web) UserAbout(w http.ResponseWriter, r *http.Request) {
-	// REFACTORING
-	cookie, err := r.Cookie("gummo_token")
+	user, err := CurrentUser(r.Context())
 	if err != nil {
-		render.Status(r, http.StatusUnauthorized)
-		render.JSON(w, r, http.StatusText(http.StatusUnauthorized))
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
 		return
 	}
-
-	// render.Status(r, http.StatusNotFound)
-	// render.JSON(w, r, http.StatusText(http.StatusNotFound))
-	// return
 
 	render.Status(r, http.StatusOK)
 	render.JSON(w, r, user)
