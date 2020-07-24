@@ -44,6 +44,7 @@ func NewWeb(db db.Database, rdb *redis.Client) *Web {
 		r.Post("/register", wb.UserRegister)
 		r.Post("/login", wb.UserLogin)
 		r.With(wb.Authenticator).Get("/me", wb.UserAbout)
+		r.With(wb.Authenticator).Get("/logout", wb.UserLogout)
 	})
 
 	return wb

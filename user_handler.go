@@ -115,3 +115,27 @@ func (wb *Web) UserAbout(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, http.StatusOK)
 	render.JSON(w, r, user)
 }
+
+func (wb *Web) UserLogout(w http.ResponseWriter, r *http.Request) {
+	sid, err := r.Cookie(CookieKey)
+	if err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
+		return
+	}
+
+	err = wb.Redis.Del(sid.String()).Err()
+	if err != nil {
+		render.Status(r, http.StatusInternalServerError)
+		render.JSON(w, r, http.StatusText(http.StatusInternalServerError))
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    CookieKey,
+		Value:   "",
+		Expires: time.Now(),
+	})
+
+	render.Status(r, http.StatusOK)
+}
